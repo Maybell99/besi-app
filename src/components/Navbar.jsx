@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { FaShoppingCart, FaBars, FaTimes } from 'react-icons/fa';
+import Logo from "../assets/images/logo.jpeg";
 
 function Navbar() {
   const { cartItems } = useContext(CartContext);
@@ -17,7 +18,8 @@ function Navbar() {
       <div className="container-custom py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center space-x-2">
+            <img src={Logo} alt="Besi Ventures" className="h-12 w-12 object-cover rounded-full" />
             <span className="text-2xl font-bold text-primary">Besi Ventures</span>
           </Link>
 
@@ -58,34 +60,10 @@ function Navbar() {
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4">
             <div className="flex flex-col space-y-4">
-              <Link 
-                to="/" 
-                className="text-gray-700 hover:text-primary font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link 
-                to="/about" 
-                className="text-gray-700 hover:text-primary font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                About
-              </Link>
-              <Link 
-                to="/products" 
-                className="text-gray-700 hover:text-primary font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Products
-              </Link>
-              <Link 
-                to="/contact" 
-                className="text-gray-700 hover:text-primary font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contact
-              </Link>
+              <Link to="/" className="text-gray-700 hover:text-primary font-medium" onClick={() => setIsMenuOpen(false)}>Home</Link>
+              <Link to="/about" className="text-gray-700 hover:text-primary font-medium" onClick={() => setIsMenuOpen(false)}>About</Link>
+              <Link to="/products" className="text-gray-700 hover:text-primary font-medium" onClick={() => setIsMenuOpen(false)}>Products</Link>
+              <Link to="/contact" className="text-gray-700 hover:text-primary font-medium" onClick={() => setIsMenuOpen(false)}>Contact</Link>
             </div>
           </div>
         )}

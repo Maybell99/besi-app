@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaInstagram, FaTwitter, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaTiktok } from 'react-icons/fa6'; // Import TikTok icon
 
 function Footer() {
   const currentYear = new Date().getFullYear();
@@ -23,6 +24,9 @@ function Footer() {
               </a>
               <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
                 <FaTwitter size={20} />
+              </a>
+              <a href="https://www.tiktok.com/@besi_ventures?lang=en" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
+                <FaTiktok size={20} />
               </a>
             </div>
           </div>
@@ -52,15 +56,15 @@ function Footer() {
             <ul className="space-y-2">
               <li className="flex items-center">
                 <FaMapMarkerAlt className="mr-2" />
-                <span className="text-gray-300">Accra, Ghana</span>
+                <span className="text-gray-300">Wenchi, Kumasi</span>
               </li>
               <li className="flex items-center">
                 <FaPhone className="mr-2" />
-                <span className="text-gray-300">+233 XX XXX XXXX</span>
+                <span className="text-gray-300">+233 246 328 332</span>
               </li>
               <li className="flex items-center">
                 <FaEnvelope className="mr-2" />
-                <span className="text-gray-300">info@besiventures.com</span>
+                <span className="text-gray-300">besiventures@gmail.com</span>
               </li>
             </ul>
           </div>
