@@ -52,7 +52,7 @@ function ProductCard({ product }) {
           </div>
           {/* Paystack Button */}
           <div className="mt-4">
-            <PaystackButton {...paystackConfig} className="btn bg-green-500 text-white px-4 py-2 rounded-lg" />
+            <PaystackButton {...paystackConfig} className="btn bg-orange-950 text-white px-4 py-2 rounded-lg transition-all duration-300 hover:bg-primary focus:ring-2 focus:ring-neutral-100 focus:outline-none" />
           </div>
         </div>
       </Link>
