@@ -14,9 +14,9 @@ function Checkout() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically handle the checkout process, e.g., send data to an API
+    
     setSubmitted(true);
-    clearCart(); // Clear the cart after submission
+    clearCart(); 
   };
 
   return (

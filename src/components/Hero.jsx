@@ -1,11 +1,29 @@
 import { Link } from 'react-router-dom';
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
+
 import One from "../assets/images/one.webp";
+import Two from "../assets/images/two.jpg";
+import Three from "../assets/images/three.jpg";
 
 function Hero() {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: false,
+  };
+
   return (
     <div className="relative bg-gradient-to-r from-primary/90 to-primary">
       <div className="container-custom py-16 md:py-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          {/* Left Side: Text Content */}
           <div className="text-white">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Nutritious Local Snacks for Everyone
@@ -23,12 +41,20 @@ function Hero() {
               </Link>
             </div>
           </div>
-          <div className="hidden md:block">
-            <img 
-              src={One} 
-              alt="Millet and groundnut products" 
-              className="rounded-lg shadow-lg object-cover h-96 w-full"
-            />
+
+          {/* Right Side: Image Slider */}
+          <div className="w-full">
+            <Slider {...settings}>
+              <div>
+                <img src={One} alt="Product 1" className="rounded-lg shadow-lg object-cover h-96 w-full"/>
+              </div>
+              <div>
+                <img src={Two} alt="Product 2" className="rounded-lg shadow-lg object-cover h-96 w-full"/>
+              </div>
+              <div>
+                <img src={Three} alt="Product 3" className="rounded-lg shadow-lg object-cover h-96 w-full"/>
+              </div>
+            </Slider>
           </div>
         </div>
       </div>
