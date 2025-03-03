@@ -16,15 +16,13 @@ function Footer() {
               Providing nutritious local, easy and ready-to-eat instant meals made from millet and groundnut.
             </p>
             <div className="flex space-x-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
+              <a href="https://web.facebook.com/profile.php?id=61573636324884" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
                 <FaFacebook size={20} />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
+              <a href="https://www.instagram.com/besiventures/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
                 <FaInstagram size={20} />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
-                <FaTwitter size={20} />
-              </a>
+              
               <a href="https://www.tiktok.com/@besi_ventures?lang=en" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
                 <FaTiktok size={20} />
               </a>

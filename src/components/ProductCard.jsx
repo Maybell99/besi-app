@@ -1,61 +1,58 @@
-import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
 import { PaystackButton } from "react-paystack";
-import Three from "../assets/images/three.jpg";
+import P1 from "../assets/images/p1.jpg";
+import P2 from "../assets/images/p2.jpg";
+import P3 from "../assets/images/p3.jpg";
+import P4 from "../assets/images/p4.jpg";
 
-const publicKey = "pk_test_1234567890abcdef"; // Replace with your real Paystack key
+const productImages = [P1, P2, P3, P4];
 
 function ProductCard({ product }) {
-  const { addToCart } = useCart();
-  const { id, name, description, price, image, inStock } = product;
+  const { id, name, description, price, inStock } = product;
+  const image = productImages[id - 1] || P1; // Select correct image
+  const publicKey = "your-paystack-public-key"; // Replace with your actual Paystack public key
 
   const paystackConfig = {
-    email: "customer@example.com", // Change to dynamic user email
-    amount: price * 100, // Convert to kobo (Paystack uses kobo)
-    publicKey: publicKey,
-    text: "Pay Now",
+    email: "customer@example.com", // Replace with dynamic email if needed
+    amount: price * 100, // Convert to kobo
+    currency: "GHS",
+    publicKey,
     onSuccess: (response) => {
-      console.log("Payment Successful!", response);
-      alert("Payment Successful!");
+      alert("Payment Successful! Transaction Reference: " + response.reference);
     },
     onClose: () => {
-      console.log("Payment window closed.");
+      alert("Transaction was not completed");
     },
   };
 
   return (
-    <div className="product-card">
-      <Link to={`/products/${id}`}>
-        <div className="relative">
-          <img src={Three} alt={name} className="w-full h-48 object-cover" />
-          {!inStock && (
-            <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105">
+      <div className="relative">
+        <img src={image} alt={name} className="w-full h-56 object-cover" />
+        {!inStock && (
+          <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+            Out of Stock
+          </div>
+        )}
+      </div>
+      <div className="p-5 bg-gray-50">
+        <h3 className="text-lg font-semibold text-gray-800">{name}</h3>
+        <p className="text-gray-600 text-sm mt-2 line-clamp-2">{description}</p>
+        <div className="mt-4 flex justify-between items-center">
+          <span className="text-primary font-bold text-lg">GH₵ {price.toFixed(2)}</span>
+          {inStock ? (
+            <PaystackButton
+              className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition"
+              {...paystackConfig}
+            >
+              Buy Now
+            </PaystackButton>
+          ) : (
+            <button disabled className="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed">
               Out of Stock
-            </div>
+            </button>
           )}
         </div>
-        <div className="p-4">
-          <h3 className="text-lg font-semibold">{name}</h3>
-          <p className="text-gray-600 text-sm mt-1 line-clamp-2">{description}</p>
-          <div className="mt-3 flex justify-between items-center">
-            <span className="text-primary font-bold">GH₵ {price.toFixed(2)}</span>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                addToCart(product, 1);
-              }}
-              disabled={!inStock}
-              className={`btn btn-primary text-sm py-1 px-3 ${!inStock ? "opacity-50 cursor-not-allowed" : ""}`}
-            >
-              Add to Cart
-            </button>
-          </div>
-          {/* Paystack Button */}
-          <div className="mt-4">
-            <PaystackButton {...paystackConfig} className="btn bg-orange-950 ml-24 text-white px-4 py-2 rounded-lg transition-all duration-300 hover:bg-primary focus:ring-2 focus:ring-neutral-100 focus:outline-none" />
-          </div>
-        </div>
-      </Link>
+      </div>
     </div>
   );
 }
