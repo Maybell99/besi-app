@@ -131,7 +131,7 @@ function Home() {
         whileInView="onscreen"
         viewport={{ once: true, amount: 0.2 }}
         variants={sectionVariants}
-        className="py-16 bg-gradient-to-r from-primary to-secondary text-white"
+        className="py-16 bg-gradient-to-r from-primary to-accent text-white"
       >
         <div className="container-custom flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 md:pr-12">
