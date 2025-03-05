@@ -1,118 +1,227 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FaLeaf, FaHeartbeat, FaSeedling, FaAppleAlt, FaHandHoldingHeart } from "react-icons/fa";
 import Inno from "../assets/images/inno.jpg";
 
 function About() {
+  const missionCards = [
+    {
+      icon: <FaLeaf className="text-accent text-5xl" />,
+      title: "Nutrition First",
+      text: "Prioritizing essential nutrients in every product to support overall health"
+    },
+    {
+      icon: <FaSeedling className="text-accent text-5xl" />,
+      title: "Local Sourcing",
+      text: "Supporting Ghanaian farmers through local ingredient sourcing"
+    },
+    {
+      icon: <FaHandHoldingHeart className="text-accent text-5xl" />,
+      title: "Accessibility",
+      text: "Making healthy snacks available to all, regardless of location or income"
+    }
+  ];
+
+  const nutritionBenefits = [
+    {
+      icon: <FaAppleAlt className="text-primary text-5xl" />,
+      title: "Millet - The Super Grain",
+      content: "Rich in fiber, protein, and B-vitamins, millet is a gluten-free grain that supports digestive health, boosts energy, and reduces cholesterol levels.",
+      bg: "bg-primary-50 border-2 border-primary-100"
+    },
+    {
+      icon: <FaHeartbeat className="text-accent text-5xl" />,
+      title: "Groundnut - Protein Powerhouse",
+      content: "Packed with plant-based protein and healthy fats, groundnuts improve heart health, brain function, and weight management.",
+      bg: "bg-secondary-50 border-2 border-secondary-100"
+    }
+  ];
+
   return (
-    <div>
+    <div className="overflow-hidden">
       {/* Hero Section */}
-      <div className="bg-primary text-white py-20">
+      <header className="bg-primary text-white py-16 md:py-24">
         <div className="container-custom text-center">
-          <h1 className="text-5xl font-extrabold mb-6">About Besi Ventures</h1>
-          <p className="text-2xl">
-            Providing nutritious local snacks made from millet and groundnut.
-          </p>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-3xl md:text-5xl font-bold mb-6"
+          >
+            About Besi Ventures
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="text-2xl md:text-3xl max-w-2xl mx-auto leading-relaxed"
+          >
+            Providing nutritious local snacks made from millet and groundnut
+          </motion.p>
         </div>
-      </div>
+      </header>
 
       {/* Our Story */}
-      <section className="py-20">
-        <div className="container-custom">
-          <h2 className="text-4xl font-bold text-gray-800 mt-20">Our Story</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div>
-              <p className="text-lg leading-relaxed text-gray-700">
-                This is <span className="font-bold">Hafisatu Adams</span>, a visionary blind entrepreneur from Wenchi 
-                in the Bono Region. She identified a pressing need for nutritious, easy-to-eat meals and developed 
-                an innovative solution—Besi. This dried, ready-to-eat meal, made from millet and groundnuts, offers 
-                a healthier alternative to traditional options like gari. Packed with fiber, protein, and B-vitamins, 
-                Besi is an excellent choice for students, particularly those in boarding schools. With overwhelming 
-                support from parents and students, Hafisatu is now seeking resources to expand production and make 
-                Besi accessible to communities across Ghana and beyond.
-              </p>
-            </div>
-            <div>
-              <img
-                src={Inno}
-                alt="A bowl of millet grains, one of Besi's main ingredients"
-                className="rounded-lg shadow-lg w-full max-w-md mx-auto"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="py-16 md:py-24 bg-gray-50">
+  <div className="container-custom">
+    {/* Section Heading */}
+    <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-12 text-center">
+      Our Story
+    </h2>
 
-      {/* Nutritional Benefits */}
-      <section className="py-20 bg-gradient-to-b from-primary to-secondary text-white">
-        <div className="container-custom">
-          <h2 className="text-4xl font-bold text-center mb-10">Nutritional Benefits</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div className="bg-white p-8 rounded-lg shadow-lg text-gray-800">
-              <h3 className="text-2xl font-semibold mb-4 text-primary">Millet - The Super Grain</h3>
-              <p className="text-lg leading-relaxed">
-                Millet is a highly nutritious grain rich in fiber, protein, and essential vitamins and minerals. 
-                It provides sustained energy and promotes digestive health while being gluten-free, making it an 
-                excellent option for people with gluten sensitivities. It is also packed with antioxidants and aids 
-                in reducing cholesterol levels.
-              </p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-lg text-gray-800">
-              <h3 className="text-2xl font-semibold mb-4 text-primary">Groundnut - The Protein Powerhouse</h3>
-              <p className="text-lg leading-relaxed">
-                Groundnuts (peanuts) are a great source of plant-based protein and healthy fats. They support heart 
-                health, improve brain function, and help maintain a healthy weight. They are also rich in essential 
-                vitamins like Vitamin E and B-complex, which contribute to overall well-being.
-              </p>
-            </div>
+    {/* Content Grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      {/* Text Content */}
+      <article className="space-y-8">
+        <motion.p
+          className="text-lg md:text-xl leading-loose text-gray-600"
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          Meet <strong className="font-semibold text-gray-800">Hafisatu Adams</strong>,
+          a visionary entrepreneur from Wenchi in the Bono Region.
+          She identified a pressing need for nutritious, easy-to-eat meals
+          and developed an innovative solution—Besi.
+        </motion.p>
+        <motion.p
+          className="text-lg md:text-xl leading-loose text-gray-600"
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          This dried, ready-to-eat meal made from millet and groundnuts
+          offers a healthier alternative to traditional options. Packed
+          with fiber and protein, Besi is now expanding to communities
+          across Ghana and beyond.
+        </motion.p>
+      </article>
+
+      {/* Image Section */}
+      <motion.figure
+        className="relative overflow-hidden rounded-xl border-4 border-accent shadow-lg max-w-[350px] md:max-w-[400px] mx-auto"
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, margin: "-100px" }}
+        whileHover={{ scale: 1.05 }}
+      >
+        <img
+          src={Inno}
+          alt="Hafisatu Adams, founder of Besi Ventures"
+          className="rounded-xl w-full object-cover"
+          loading="lazy"
+        />
+        <figcaption className="sr-only">
+          Founder of Besi Ventures, Hafisatu Adams
+        </figcaption>
+      </motion.figure>
+    </div>
+  </div>
+</section>
+
+
+
+      
+<section className="py-16 md:py-24 bg-gray-200">
+  <div className="container-custom">
+    <h2 className="text-4xl md:text-4xl font-bold text-gray-800 text-center mb-12">
+      Nutritional Benefits
+    </h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {nutritionBenefits.map((item, index) => (
+        <motion.article
+          key={index}
+          className={`bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-l-4 border-primary`}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <div className="flex items-center gap-4 mb-4">
+            <span aria-hidden="true">{item.icon}</span>
+            <h3 className="text-3xl font-bold text-gray-800">{item.title}</h3>
           </div>
-        </div>
-      </section>
+          <p className="text-gray-600 text-lg leading-relaxed">
+            {item.content}
+          </p>
+        </motion.article>
+      ))}
+    </div>
+  </div>
+</section>
+
 
       {/* Our Mission */}
-      <section className="py-20 bg-gray-50">
-        <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-800">Our Mission</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mt-4 leading-relaxed">
-              To provide nutritious, convenient, and delicious snacks that promote health and well-being.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Nutrition First",
-                text: "We prioritize the nutritional value of our products, ensuring they provide essential nutrients that support overall health.",
-              },
-              {
-                title: "Local Sourcing",
-                text: "We source our ingredients locally to support Ghanaian farmers and reduce our carbon footprint.",
-              },
-              {
-                title: "Accessibility",
-                text: "We strive to make our products accessible to everyone, regardless of their location or economic status.",
-              },
-            ].map((item, index) => (
-              <div key={index} className="bg-white p-8 rounded-lg shadow-md text-center">
-                <h3 className="text-2xl font-semibold mb-4 text-primary">{item.title}</h3>
-                <p className="text-lg text-gray-700 leading-relaxed">{item.text}</p>
-              </div>
+      <section className="py-16 md:py-24 bg-secondary-50">
+        <div className="container-custom text-center">
+          <h2 className="text-4xl md:text-4xl font-bold text-gray-800">
+            Our Mission
+          </h2>
+          <p className="text-2xl text-gray-600 max-w-3xl mx-auto mt-6">
+            To provide nutritious, convenient, and delicious snacks that promote 
+            health and well-being
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+            {missionCards.map((item, index) => (
+              <motion.article 
+                key={index}
+                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+              >
+                <div className="flex justify-center mb-6" aria-hidden="true">
+                  {item.icon}
+                </div>
+                <h3 className="text-2xl font-bold text-primary mb-4">
+                  {item.title}
+                </h3>
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  {item.text}
+                </p>
+              </motion.article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-20 bg-primary text-white text-center">
+      {/* CTA */}
+      <section className="py-16 md:py-24 bg-accent text-white text-center">
         <div className="container-custom">
-          <h2 className="text-4xl font-bold mb-6">Experience the Besi Difference</h2>
-          <p className="text-xl mb-8 max-w-3xl mx-auto leading-relaxed">
-            Try our nutritious millet and groundnut products today and discover a new way to snack healthy.
-          </p>
-          <Link
-            to="/products"
-            className="py-4 px-8 rounded-lg bg-white text-primary font-semibold text-lg hover:bg-gray-200 transition-all duration-300"
+          <motion.h2 
+            className="text-4xl md:text-4xl font-bold mb-8"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
           >
-            Browse Our Products
-          </Link>
+            Experience the Besi Difference
+          </motion.h2>
+          <motion.p
+            className="text-2xl mb-12 max-w-3xl mx-auto"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
+            Try our nutritious millet and groundnut products today
+          </motion.p>
+          <motion.div
+            initial={{ scale: 0 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true }}
+          >
+            <Link
+              to="/products"
+              className="inline-block px-12 py-5 bg-white text-primary rounded-xl font-bold text-lg
+              hover:bg-gray-50 transition-colors duration-300 focus:outline-none focus:ring-2 
+              focus:ring-white focus:ring-offset-2 focus:ring-offset-primary shadow-lg hover:shadow-xl"
+              role="button"
+            >
+              Browse Products
+            </Link>
+          </motion.div>
         </div>
       </section>
     </div>
