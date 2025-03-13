@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { FaShoppingCart, FaBars, FaTimes } from 'react-icons/fa';
-import Logo from "../assets/images/logo.jpeg";
+import Logo from "../../public/logo.jpeg";
 
 function Navbar() {
   const { cartItems } = useContext(CartContext);
