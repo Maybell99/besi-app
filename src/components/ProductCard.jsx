@@ -1,41 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PaystackButton } from "react-paystack";
-import P1 from "../assets/images/p1.jpg";
-import P2 from "../assets/images/p2.jpg";
-import P3 from "../assets/images/p3.jpg";
-import P4 from "../assets/images/p4.jpg";
+import { FaHeart } from "react-icons/fa";
+import { useCart } from "../context/CartContext";
+import P1 from "../assets/images/p1.webp";
+import P2 from "../assets/images/p2.webp";
+import P3 from "../assets/images/p3.webp";
+import P4 from "../assets/images/p4.webp";
+import P5 from "../assets/images/p5.webp";
+import P6 from "../assets/images/p6.webp";
 
-const productImages = [P1, P2, P3, P4];
+const productImages = { 1: P1, 2: P2, 3: P3, 4: P4, 5: P5, 6: P6 };
 
-function ProductCard({ product }) {
+function ProductCard({ product, userEmail }) {
   const { id, name, description, price, inStock } = product;
-  const image = productImages[id - 1] || P1;
-  const publicKey = "pk_test_2a3467018d801785590349b2a546b85a831e4491"; // Replace with your actual Paystack public key
-  const email = "besiventures@gmail.com"; // Replace with actual customer email
+  const { addToCart, removeFromCart, cartItems } = useCart();
+  const [isAdded, setIsAdded] = useState(false);
+  const image = productImages[id] || P1;
+  const publicKey = "pk_test_2a3467018d801785590349b2a546b85a831e4491";
 
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [transactionRef, setTransactionRef] = useState("");
+  useEffect(() => {
+    setIsAdded(cartItems.some((item) => item.id === id));
+  }, [cartItems, id]);
 
-  const paystackConfig = {
-    email,
-    amount: price * 100,
-    currency: "GHS",
-    publicKey,
-    onSuccess: (response) => {
-      setIsProcessing(false);
-      setPaymentSuccess(true);
-      setTransactionRef(response.reference);
-    },
-    onClose: () => {
-      setIsProcessing(false);
-    },
+  const handleToggleCart = () => {
+    isAdded ? removeFromCart(id) : addToCart(product);
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 p-5">
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 relative p-4">
+      {/* Heart Button */}
+      <button
+        className="absolute top-4 right-4 flex items-center gap-2 px-3 py-2 rounded-full transition duration-300 bg-white shadow-md z-10"
+        onClick={handleToggleCart}
+        aria-label={isAdded ? "Remove from cart" : "Add to cart"}
+        aria-pressed={isAdded}
+      >
+        <FaHeart size={22} className={isAdded ? "text-red-600" : "text-gray-400"} />
+      </button>
+
       <div className="relative">
-        <img src={image} alt={name} className="w-full h-56 object-cover rounded-md" />
+        <img src={image} alt={name} className="w-full h-56 object-cover" />
         {!inStock && (
           <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
             Out of Stock
@@ -43,31 +47,27 @@ function ProductCard({ product }) {
         )}
       </div>
 
-      <div className="mt-4">
+      <div className="p-5 bg-gray-50">
         <h3 className="text-lg font-semibold text-gray-800">{name}</h3>
-        <p className="text-gray-600 text-sm mt-2">{description}</p>
-
+        <p className="text-gray-600 text-sm mt-2 line-clamp-2">{description}</p>
         <div className="mt-4 flex justify-between items-center">
-          <span className="text-primary font-bold text-lg">GH₵ {price.toFixed(2)}</span>
-
+          <span className="text-primary font-bold text-lg">GH₵ {Number(price).toFixed(2)}</span>
           {inStock ? (
-            paymentSuccess ? (
-              <div className="text-green-600 font-semibold text-sm text-center">
-                ✅ Payment Successful!  
-                <br />
-                Ref: {transactionRef}
-              </div>
-            ) : (
-              <PaystackButton
-                className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary-dark transition-all duration-300 shadow-lg text-sm font-semibold disabled:bg-gray-400"
-                {...paystackConfig}
-                onClick={() => setIsProcessing(true)}
-              >
-                {isProcessing ? "Processing..." : "Buy Now"}
-              </PaystackButton>
-            )
+            <PaystackButton
+              email={userEmail || "besiventures@gmail.com"}
+              amount={Number(price) * 100}
+              currency="GHS"
+              publicKey={publicKey}
+              onSuccess={(response) =>
+                alert("Payment Successful! Transaction Reference: " + response.reference)
+              }
+              onClose={() => alert("Transaction was not completed")}
+              className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition"
+            >
+              Buy Now
+            </PaystackButton>
           ) : (
-            <button disabled className="bg-gray-400 text-white px-5 py-2 rounded-lg cursor-not-allowed">
+            <button disabled className="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed">
               Out of Stock
             </button>
           )}

@@ -7,6 +7,7 @@ const products = [
     image: "/assets/images/p1.jpg",
     inStock: true,
     featured: true,
+    category: "Snacks",
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ const products = [
     image: "/assets/images/p2.jpg",
     inStock: true,
     featured: true,
+    category: "Bars",
   },
   {
     id: 3,
@@ -25,6 +27,7 @@ const products = [
     image: "/assets/images/p3.jpg",
     inStock: false,
     featured: false,
+    category: "Snacks",
   },
   {
     id: 4,
@@ -34,6 +37,27 @@ const products = [
     image: "/assets/images/p4.jpg",
     inStock: true,
     featured: true,
+    category: "Healthy",
+  },
+  {
+    id: 5,
+    name: "Golden Millet Puffs",
+    description: "Air-popped millet puffs with a touch of honey for sweetness.",
+    price: 55,
+    image: "/assets/images/p5.jpg",
+    inStock: true,
+    featured: false,
+    category: "Puffs",
+  },
+  {
+    id: 6,
+    name: "Protein Power Mix",
+    description: "A perfect blend of roasted millet and groundnuts for energy.",
+    price: 65,
+    image: "/assets/images/p6.jpg",
+    inStock: true,
+    featured: true,
+    category: "Mixes",
   },
 ];
 

@@ -56,9 +56,9 @@ function Products() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Categories */}
             <div className="flex flex-wrap gap-2">
-              {categories.map(category => (
+              {categories.map((category, index) => (
                 <button
-                  key={category}
+                  key={index} // ✅ Fix: Added unique key
                   onClick={() => setActiveCategory(category)}
                   className={`px-4 py-2 rounded-full text-sm font-medium capitalize ${
                     activeCategory === category
@@ -90,8 +90,8 @@ function Products() {
         <div className="container-custom">
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProducts.map(product => (
-                <div key={product.id} onClick={() => navigate(`/products/${product.id}`)}>
+              {filteredProducts.map((product, index) => (
+                <div key={product.id || index} onClick={() => navigate(`/products/${product.id}`)}> {/* ✅ Fix: Ensured unique key */}
                   <ProductCard product={product} />
                 </div>
               ))}

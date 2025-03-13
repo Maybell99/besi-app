@@ -1,12 +1,14 @@
-import { useContext } from 'react';
-import { CartContext } from '../context/CartContext'; // Assuming you have a CartContext for managing cart state
+import { useContext, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { CartContext } from '../context/CartContext';
 
 function Cart() {
   const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
-  };
+  const calculateTotal = useMemo(() => {
+    return cartItems.reduce((total, item) => total + (Number(item.price) * item.quantity), 0).toFixed(2);
+  }, [cartItems]);
 
   return (
     <div className="container-custom py-16">
@@ -23,7 +25,7 @@ function Cart() {
               <li key={item.id} className="flex justify-between items-center border-b pb-4">
                 <div>
                   <h3 className="text-lg font-semibold">{item.name}</h3>
-                  <p>Price: ${item.price.toFixed(2)}</p>
+                  <p>Price: GH₵ {Number(item.price).toFixed(2)}</p>
                   <p>Quantity: {item.quantity}</p>
                 </div>
                 <button
@@ -36,7 +38,7 @@ function Cart() {
             ))}
           </ul>
           <div className="mt-6">
-            <h2 className="text-xl font-semibold">Total: ${calculateTotal()}</h2>
+            <h2 className="text-xl font-semibold">Total: GH₵ {calculateTotal}</h2>
             <button
               onClick={clearCart}
               className="mt-4 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
@@ -44,7 +46,7 @@ function Cart() {
               Clear Cart
             </button>
             <button
-              onClick={() => alert('Proceeding to checkout...')} // Replace with actual checkout logic
+              onClick={() => navigate('/checkout')} // Navigate to Checkout Page
               className="mt-4 ml-4 bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-dark"
             >
               Proceed to Checkout
@@ -56,4 +58,4 @@ function Cart() {
   );
 }
 
-export default Cart; 
+export default Cart;

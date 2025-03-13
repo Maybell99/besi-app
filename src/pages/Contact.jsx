@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import TestComponent from '../components/TestComponent';
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -123,6 +124,8 @@ function Contact() {
           </button>
         </form>
       )}
+
+      <TestComponent/>
     </div>
   );
 }
