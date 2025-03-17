@@ -1,33 +1,54 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import ProductCard from "./ProductCard";
-import products from "../data/products";
 
 function FeaturedProducts() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  console.log("Fetching products from:", `${apiUrl}/api/products`);
 
   useEffect(() => {
-    try {
-      const featured = products.filter((product) => product.featured);
-      setFeaturedProducts(featured);
-    } catch (error) {
-      console.error("Error loading featured products:", error);
-      setFeaturedProducts([]);
-    }
+    fetchFeaturedProducts();
   }, []);
 
-  // Animation configurations
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-    },
-  };
+  const fetchFeaturedProducts = async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
+      const response = await fetch(`${apiUrl}/api/products`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}`);
+      }
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Invalid JSON response from server.");
+      }
+
+      const data = await response.json();
+      console.log("Fetched products:", data); // ✅ Debugging: Ensure stock data exists
+
+      if (Array.isArray(data)) {
+        const formattedProducts = data.slice(0, 4).map((product) => ({
+          ...product,
+          stock: product.stock ?? product.quantity ?? product.availableStock ?? 0, // Handle different API field names
+        }));
+
+        setFeaturedProducts(formattedProducts);
+      } else {
+        throw new Error("Unexpected response format.");
+      }
+    } catch (error) {
+      console.error("Error fetching featured products:", error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,24 +72,29 @@ function FeaturedProducts() {
           </motion.p>
         </div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-        >
-          {featuredProducts.length > 0 ? (
-            featuredProducts.map((product) => (
-              <motion.div key={product.id} variants={itemVariants} transition={{ duration: 0.5 }}>
-                <ProductCard product={product} />
+        {loading ? (
+          <div className="text-center text-gray-500">Loading products...</div>
+        ) : error ? (
+          <div className="text-center text-red-500">Error: {error}</div>
+        ) : (
+          <motion.div
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+          >
+            {featuredProducts.length > 0 ? (
+              featuredProducts.map((product) => (
+                <motion.div key={product.id} transition={{ duration: 0.5 }}>
+                  <ProductCard product={product} />
+                </motion.div>
+              ))
+            ) : (
+              <motion.div className="col-span-full text-center">
+                <p className="text-gray-500">No featured products available.</p>
               </motion.div>
-            ))
-          ) : (
-            <motion.div className="col-span-full text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <p className="text-gray-500">No featured products available.</p>
-            </motion.div>
-          )}
-        </motion.div>
+            )}
+          </motion.div>
+        )}
       </div>
     </section>
   );

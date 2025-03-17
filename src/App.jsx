@@ -1,3 +1,4 @@
+import React from "react"; // Ensure React is imported
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";

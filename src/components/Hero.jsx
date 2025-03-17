@@ -23,6 +23,7 @@ function Hero() {
     <div className="relative bg-gradient-to-r from-primary/90 to-primary">
       <div className="container-custom py-16 md:py-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          
           {/* Left Side: Text Content */}
           <div className="text-white">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -33,10 +34,18 @@ function Hero() {
               Easy to eat, ready to go, and good for you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/products" className="btn bg-white text-primary hover:bg-gray-100 font-semibold">
+              <Link 
+                to="/products" 
+                aria-label="Shop our products"
+                className="px-6 py-3 bg-white text-primary font-semibold rounded-md hover:bg-gray-100 transition duration-300"
+              >
                 Shop Now
               </Link>
-              <Link to="/about" className="btn border-2 border-white text-white hover:bg-white/10 font-semibold">
+              <Link 
+                to="/about" 
+                aria-label="Learn more about us"
+                className="px-6 py-3 border-2 border-white text-white font-semibold rounded-md hover:bg-white/10 transition duration-300"
+              >
                 Learn More
               </Link>
             </div>
@@ -45,17 +54,19 @@ function Hero() {
           {/* Right Side: Image Slider */}
           <div className="w-full">
             <Slider {...settings}>
-              <div>
-                <img src={One} alt="Product 1" className="rounded-lg shadow-lg object-cover h-96 w-full"/>
-              </div>
-              <div>
-                <img src={Two} alt="Product 2" className="rounded-lg shadow-lg object-cover h-96 w-full"/>
-              </div>
-              <div>
-                <img src={Three} alt="Product 3" className="rounded-lg shadow-lg object-cover h-96 w-full"/>
-              </div>
+              {[One, Two, Three].map((image, index) => (
+                <div key={index} className="flex justify-center">
+                  <img 
+                    src={image} 
+                    alt={`Product ${index + 1}`} 
+                    className="rounded-lg shadow-lg object-cover w-full h-[24rem] min-h-[300px]" 
+                    loading="lazy"
+                  />
+                </div>
+              ))}
             </Slider>
           </div>
+
         </div>
       </div>
     </div>
