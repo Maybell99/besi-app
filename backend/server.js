@@ -60,8 +60,14 @@ async function verifyGoogleAccess() {
 
 // Initialize Express
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173' })); // Make sure this is correct for frontend
+app.use(cors({
+  origin: [
+    'http://localhost:5173',  // Local development URL
+    'https://my-app-besi-ventures.netlify.app'  // Production URL on Netlify
+  ]
+})); // Make sure to add all the domains you want to allow for cross-origin requests
 app.use(express.json());
+
 
 // Enhanced product data fetcher with better error handling and input validation
 async function fetchProductData() {
