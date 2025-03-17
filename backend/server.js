@@ -2,7 +2,6 @@ import express from "express";
 import { google } from "googleapis";
 import cors from "cors";
 import dotenv from "dotenv";
-import fs from "fs";
 import path from "path";
 import Paystack from "paystack-api";
 
@@ -11,7 +10,7 @@ const envPath = path.resolve(process.cwd(), "backend", ".env");
 dotenv.config({ path: envPath });
 
 // Configuration validation
-const requiredEnvVars = ['SPREADSHEET_ID', 'PAYSTACK_SECRET_KEY'];
+const requiredEnvVars = ['SPREADSHEET_ID', 'PAYSTACK_SECRET_KEY', 'GOOGLE_CREDENTIALS'];
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
 if (missingVars.length > 0) {
   console.error(`❌ Missing environment variables: ${missingVars.join(', ')}`);
@@ -21,16 +20,13 @@ if (missingVars.length > 0) {
 const {
   SPREADSHEET_ID,
   PAYSTACK_SECRET_KEY,
-  PORT = 5000,
-  BASE_URL = "http://localhost:5000"
+  PORT = 4000,
+  BASE_URL = "http://localhost:4000"
 } = process.env;
 
 // Initialize Google Sheets API
 const auth = new google.auth.GoogleAuth({
-  credentials: JSON.parse(fs.readFileSync(
-    path.resolve(process.cwd(), "backend", "google-credentials.json"), 
-    "utf-8"
-  )),
+  credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS), // Use credentials from the environment
   scopes: ["https://www.googleapis.com/auth/spreadsheets"]
 });
 const sheets = google.sheets({ version: "v4", auth });
@@ -65,9 +61,8 @@ app.use(cors({
     'http://localhost:5173',  // Local development URL
     'https://my-app-besi-ventures.netlify.app'  // Production URL on Netlify
   ]
-})); // Make sure to add all the domains you want to allow for cross-origin requests
+}));
 app.use(express.json());
-
 
 // Enhanced product data fetcher with better error handling and input validation
 async function fetchProductData() {
@@ -79,6 +74,8 @@ async function fetchProductData() {
       dateTimeRenderOption: "FORMATTED_STRING"
     });
 
+    console.log("Fetched data from Google Sheets:", response.data.values); // Log for debugging
+
     if (!response.data.values || response.data.values.length === 0) {
       throw new Error("No data found in spreadsheet");
     }
@@ -86,7 +83,7 @@ async function fetchProductData() {
     return response.data.values
       .filter(row => row.length >= 6) // At least 6 columns of data
       .map((row, index) => ({
-        id: (row[0] || `prod-${index + 2}`).toString().trim().toLowerCase(), // +2 for 1-based sheet index
+        id: (row[0] || `prod-${index + 2}`).toString().trim().toLowerCase(),
         name: row[1]?.trim() || "Unnamed Product",
         price: Number(row[2]) || 0,
         category: row[3]?.trim() || "Uncategorized",
@@ -113,28 +110,6 @@ app.get("/api/products", async (req, res) => {
       error: "PRODUCT_FETCH_FAILED",
       message: error.message,
       details: error.stack
-    });
-  }
-});
-
-app.get("/api/products/:id", async (req, res) => {
-  try {
-    const products = await fetchProductData();
-    const product = products.find(p => p.id === req.params.id.toLowerCase());
-
-    if (!product) {
-      return res.status(404).json({
-        error: "PRODUCT_NOT_FOUND",
-        message: `Product with ID '${req.params.id}' not found`
-      });
-    }
-
-    res.json(product);
-  } catch (error) {
-    console.error("❌ Product lookup error:", error.message);
-    res.status(500).json({
-      error: "PRODUCT_LOOKUP_FAILED",
-      message: error.message
     });
   }
 });
