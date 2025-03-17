@@ -150,10 +150,10 @@ function Home() {
             <img
               src={Inno}
               alt="Hafisatu Adams, founder of Besi Ventures"
-              className="rounded-lg shadow-xl w-full max-w-[350px] border-4 border-secondary"
+              className="rounded-lg shadow-xl w-full max-w-[450px] border-4 border-secondary"
               loading="lazy"
             />
-            <figcaption className="mt-4 text-xl font-bold text-gray-700">
+            <figcaption className="mt-4 text-xl font-bold text-gray-700 ml-16">
               Hafisatu Adams
             </figcaption>
           </figure>

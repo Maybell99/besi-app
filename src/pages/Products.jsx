@@ -21,7 +21,7 @@ function Products() {
           throw new Error(`HTTP Error! Status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("Fetched Products:", data); // Log the fetched products to check the structure
+        console.log("Fetched Products:", data);
 
         if (!Array.isArray(data)) throw new Error("Invalid API response format");
 

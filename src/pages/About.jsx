@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaLeaf, FaHeartbeat, FaSeedling, FaAppleAlt, FaHandHoldingHeart } from "react-icons/fa";
-import Inno from "../assets/images/inno.jpg";
+import Inno from "../assets/images/inno2.jpg";
 
 function About() {
   const missionCards = [

@@ -1,28 +1,50 @@
-import { useContext, useState } from "react";
-import { PaystackButton } from "react-paystack";
-import { CartContext } from "../context/CartContext";
+import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from 'react-icons/fa'; // Added FaArrowLeft import
+import { PaystackButton } from "react-paystack"; // Ensure PaystackButton is correctly imported
 
 function Checkout() {
-  const { cartItems, clearCart, updateQuantity } = useContext(CartContext);
+  const { id } = useParams(); // Get the product id from the URL
+  const [product, setProduct] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [quantity, setQuantity] = useState(1); // Initialize quantity to 1
   const [errors, setErrors] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const publicKey = "pk_test_2a3467018d801785590349b2a546b85a831e4491";
 
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
-  };
+  const navigate = useNavigate();
 
-  const amount = Number(calculateTotal()) * 100;
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/products/${id}`);
+        if (!response.ok) {
+          console.error("Error fetching product:", response.status, response.statusText);
+          throw new Error("Product not found");
+        }
+        const data = await response.json();
+        setProduct(data);
+      } catch (error) {
+        console.error("Fetch error:", error);
+        setErrors("Product not found. Please try again later.");
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  const totalAmount = product ? (product.price * quantity).toFixed(2) : "0.00";
+  const amount = Number(totalAmount) * 100; // Amount for Paystack (in Kobo)
 
   const generateReference = () => `BESI_${Math.floor(Math.random() * 1000000000)}`;
 
   const handleSuccess = async (response) => {
     console.log("Payment Successful:", response);
     alert(`Payment Successful! Reference: ${response.reference}`);
-    clearCart();
   };
 
   const handleClose = () => {
@@ -31,62 +53,65 @@ function Checkout() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Check for empty fields
     if (!name.trim() || !email.trim() || !address.trim()) {
       setErrors("Please fill in all fields before proceeding.");
       return;
     }
+
+    // Validate email format
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      setErrors("Please enter a valid email address.");
+      return;
+    }
+
     setErrors("");
+    setIsSubmitting(true);  // Start submitting process
   };
 
   return (
     <div className="container mx-auto py-16 px-6 max-w-3xl bg-white shadow-lg rounded-lg">
+      <button
+        className="flex items-center text-primary hover:text-accent font-medium mb-4"
+        onClick={() => navigate('/products')}
+      >
+        <FaArrowLeft className="mr-2 size-8" />
+        Back to Products
+      </button>
       <h1 className="text-4xl font-bold text-center mb-6">Checkout</h1>
 
-      {cartItems.length === 0 ? (
-        <div className="text-center text-gray-500">
-          <h2 className="text-xl font-semibold">Your cart is empty</h2>
-          <p>Add some items to your cart before checking out!</p>
-        </div>
-      ) : (
+      {errors && <p className="text-red-500 text-sm text-center">{errors}</p>}
+
+      {product ? (
         <div>
           <div className="bg-gray-100 p-4 rounded-lg shadow-md">
             <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
-            <ul className="space-y-4">
-              {cartItems.map((item) => (
-                <li key={item.id} className="flex justify-between items-center border-b pb-2">
-                  <div>
-                    <h3 className="text-lg font-semibold">{item.name}</h3>
-                    <p className="text-gray-600">GH₵ {item.price.toFixed(2)} x {item.quantity}</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                      className="px-2 py-1 bg-gray-300 rounded-md"
-                    >
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) => {
-                        const qty = parseInt(e.target.value, 10);
-                        updateQuantity(item.id, qty > 0 ? qty : 1);
-                      }}
-                      className="w-12 text-center border border-gray-300 rounded-md"
-                      min="1"
-                    />
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="px-2 py-1 bg-gray-300 rounded-md"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <p className="font-semibold">GH₵ {(item.price * item.quantity).toFixed(2)}</p>
-                </li>
-              ))}
-            </ul>
-            <h2 className="text-xl font-bold mt-4">Total: GH₵ {calculateTotal()}</h2>
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-semibold">{product.name}</h3>
+                <p className="text-gray-600">GH₵ {product.price}</p>
+              </div>
+              <div>
+                <p className="font-semibold">GH₵ {product.price}</p>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-m font-medium text-gray-700">Quantity</label>
+              <input
+                type="number"
+                value={quantity}
+                onChange={(e) => {
+                  const qty = Math.max(1, parseInt(e.target.value, 10)); // Ensure quantity is at least 1
+                  setQuantity(qty);
+                }}
+                min="1"
+                className="w-20 text-center border border-gray-300 rounded-md mt-2"
+              />
+            </div>
+
+            <h2 className="text-xl font-bold mt-4">Total: GH₵ {totalAmount}</h2>
           </div>
 
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
@@ -126,8 +151,6 @@ function Checkout() {
               />
             </div>
 
-            {errors && <p className="text-red-500 text-sm">{errors}</p>}
-
             <div className="text-center mt-6">
               <PaystackButton
                 className="w-full bg-primary text-white py-3 rounded-lg text-lg font-semibold"
@@ -138,10 +161,15 @@ function Checkout() {
                 reference={generateReference()}
                 onSuccess={handleSuccess}
                 onClose={handleClose}
-                text={`Pay GH₵ ${calculateTotal()}`}
+                text={`Pay GH₵ ${totalAmount}`}
+                disabled={isSubmitting} // Disable button while submitting
               />
             </div>
           </form>
+        </div>
+      ) : (
+        <div className="text-center text-gray-500">
+          <p>Loading product details...</p>
         </div>
       )}
     </div>

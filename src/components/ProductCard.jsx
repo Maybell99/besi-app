@@ -35,7 +35,7 @@ function ProductCard({ product }) {
 
   const handleBuyNow = (e) => {
     e.stopPropagation();
-    navigate("/checkout", { state: { product } });
+    navigate(`/product/${id}`, { state: { product } }); // Navigate to product detail page
   };
 
   return (
@@ -72,7 +72,7 @@ function ProductCard({ product }) {
         {inStock > 0 ? (
           <button
             className="mt-4 bg-primary text-white px-4 py-2 rounded-lg hover:bg-accent transition cursor-pointer w-full"
-            onClick={handleBuyNow}
+            onClick={handleBuyNow} // Updated for product detail
           >
             Buy Now
           </button>
