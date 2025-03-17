@@ -1,6 +1,7 @@
 import { CartProvider } from "./context/CartContext"; // Ensure CartProvider is imported
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ScrollToTop from './components/ScrollToTop'; // Assuming ScrollToTop is correctly imported
+import ScrollToTop from './components/scrollToTop';
+
 import Navbar from './components/Navbar'; // Ensure Navbar is correctly imported
 import Footer from './components/Footer'; // Ensure Footer is correctly imported
 import Home from './pages/Home'; // Assuming Home page is created
