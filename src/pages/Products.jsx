@@ -8,8 +8,18 @@ function Products() {
   const [allProducts, setAllProducts] = useState([]);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Debounce the search term
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300); // Delay of 300ms
+
+    return () => clearTimeout(timeoutId); // Clean up the timeout
+  }, [searchTerm]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -23,11 +33,14 @@ function Products() {
         const data = await response.json();
         console.log("Fetched Products:", data);
 
-        if (!Array.isArray(data)) throw new Error("Invalid API response format");
-
-        setAllProducts(data);
-        localStorage.setItem("products", JSON.stringify(data));
-        localStorage.setItem("products_lastFetch", Date.now());
+        // Check if response has a success key and a products array
+        if (data.success && Array.isArray(data.products)) {
+          setAllProducts(data.products); // Set the products from the response
+          localStorage.setItem("products", JSON.stringify(data.products));
+          localStorage.setItem("products_lastFetch", Date.now());
+        } else {
+          throw new Error("Invalid API response format");
+        }
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err.message || "Failed to load products.");
@@ -57,7 +70,7 @@ function Products() {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    const term = searchTerm.toLowerCase().trim();
+    const term = debouncedSearchTerm.toLowerCase().trim();
     return allProducts.filter((product) => {
       const categoryMatch =
         activeCategory === "all" ||
@@ -68,19 +81,22 @@ function Products() {
         (product.description && product.description.toLowerCase().includes(term));
       return categoryMatch && searchMatch;
     });
-  }, [activeCategory, searchTerm, allProducts]);
+  }, [activeCategory, debouncedSearchTerm, allProducts]);
 
   const categories = useMemo(
     () => ["all", ...new Set(allProducts.map((product) => product.category?.toLowerCase()).filter(Boolean))],
     [allProducts]
   );
 
+  // Loader Animation (can be replaced with any animation you prefer)
+  const Loader = () => (
+    <div className="flex justify-center items-center py-12">
+      <div className="w-16 h-16 border-4 border-t-primary border-gray-200 rounded-full animate-spin"></div>
+    </div>
+  );
+
   if (loading) {
-    return (
-      <div className="text-center py-12">
-        <h3 className="text-xl font-semibold">Loading products...</h3>
-      </div>
-    );
+    return <Loader />;  // Display the loader while loading
   }
 
   if (error) {

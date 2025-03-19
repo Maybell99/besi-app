@@ -13,35 +13,37 @@ function FeaturedProducts() {
   useEffect(() => {
     fetchFeaturedProducts();
   }, []);
-
+  
   const fetchFeaturedProducts = async () => {
     try {
       setLoading(true);
       setError("");
-
+  
       const response = await fetch(`${apiUrl}/api/products`);
-
+  
       if (!response.ok) {
         throw new Error(`HTTP Error: ${response.status}`);
       }
-
+  
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         throw new Error("Invalid JSON response from server.");
       }
-
+  
       const data = await response.json();
-      console.log("Fetched products:", data); // ✅ Debugging: Ensure stock data exists
-
-      if (Array.isArray(data)) {
-        const formattedProducts = data.slice(0, 4).map((product) => ({
+      console.log("Fetched products response:", data); // Log the entire response to inspect it
+  
+      // Check if the response structure is correct
+      if (data && data.success && Array.isArray(data.products)) {
+        const formattedProducts = data.products.slice(0, 4).map((product) => ({
           ...product,
           stock: product.stock ?? product.quantity ?? product.availableStock ?? 0, // Handle different API field names
         }));
-
+  
         setFeaturedProducts(formattedProducts);
       } else {
-        throw new Error("Unexpected response format.");
+        // If response is not in the expected format, throw an error
+        throw new Error("Unexpected response format. Missing 'success' or 'products' array.");
       }
     } catch (error) {
       console.error("Error fetching featured products:", error.message);
@@ -50,7 +52,9 @@ function FeaturedProducts() {
       setLoading(false);
     }
   };
-
+  
+  
+  
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">

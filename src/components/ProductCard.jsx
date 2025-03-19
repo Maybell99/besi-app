@@ -35,7 +35,7 @@ function ProductCard({ product }) {
 
   const handleBuyNow = (e) => {
     e.stopPropagation();
-    navigate(`/product/${id}`, { state: { product } }); // Navigate to product detail page
+    navigate(`/products/${id}`, { state: { product } }); // Navigate to product detail page
   };
 
   return (

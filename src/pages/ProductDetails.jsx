@@ -7,6 +7,7 @@ import P3 from '../assets/images/p3.webp';
 import P4 from '../assets/images/p4.webp';
 import P5 from '../assets/images/p5.webp';
 import P6 from '../assets/images/p6.webp';
+import DefaultImage from '../assets/images/p1.webp';  // Default fallback image
 
 // Map product IDs to images
 const productImages = {
@@ -34,18 +35,21 @@ function ProductDetails() {
 
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/products/${id}`);
-
+        const response = await fetch('http://localhost:5000/api/products');  // Fetch all products
         if (!response.ok) {
-          console.error('Error fetching product:', response.status, response.statusText);
-          throw new Error(`Product not found (ID: ${id})`);
+          throw new Error('Failed to fetch products');
         }
 
         const data = await response.json();
-        setProduct(data);
+        const foundProduct = data.find((product) => product.id === parseInt(id));  // Find product by ID
+
+        if (!foundProduct) {
+          throw new Error(`Product not found (ID: ${id})`);
+        }
+
+        setProduct(foundProduct);
       } catch (err) {
-        console.error('Fetch error:', err);
-        setError(err.message);
+        setError(err.message || 'An error occurred while fetching the product.');
       } finally {
         setLoading(false);
       }
@@ -54,24 +58,28 @@ function ProductDetails() {
     fetchProduct();
   }, [id]);
 
-  if (loading) return <div className="spinner">Loading...</div>;
+  if (loading) return (
+    <div className="spinner">
+      <div></div>
+    </div>
+  );
+
   if (error) return <p className="text-red-500 text-center">{error}. Please try again later.</p>;
   if (!product) return <p className="text-center">Product not found.</p>;
 
   const inStock = product.stock || 0;
-
-  // Get the product image using the product ID
-  const productImage = productImages[product.id] || P1; // Default to P1 if the ID is not found in the mapping
+  const productImage = productImages[product.id] || DefaultImage;
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <button
-        className="flex items-center text-primary hover:text-accent font-medium mb-4"
-        onClick={() => navigate('/products')}
-      >
-        <FaArrowLeft className="mr-2 size-8" />
-        Back to Products
-      </button>
+<button
+  className="flex items-center text-primary hover:text-accent font-medium mb-4"
+  onClick={() => navigate(`/products/${id}`)} // Corrected the syntax by closing the function
+>
+  <FaArrowLeft className="mr-2 text-2xl" />
+  Back to Products
+</button>
+
 
       {/* Product Image */}
       <div className="flex justify-center mb-6">

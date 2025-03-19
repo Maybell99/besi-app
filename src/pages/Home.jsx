@@ -87,14 +87,16 @@ function Home() {
             </h3>
 
             <div className="flex justify-center gap-6 mb-6">
-              {[
+              {[ 
                 { icon: <FaFacebook />, link: "#", label: "Facebook" },
                 { icon: <FaTwitter />, link: "#", label: "Twitter" },
-                { icon: <FaInstagram />, link: "#", label: "Instagram" },
+                { icon: <FaInstagram />, link: "#", label: "Instagram" }
               ].map((social, index) => (
                 <motion.a
                   key={index}
                   href={social.link}
+                  target="_blank" // Ensures the link opens in a new tab
+                  rel="noopener noreferrer" // Security feature for external links
                   className="text-primary hover:text-secondary"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -138,12 +140,8 @@ function Home() {
             <h2 className="text-4xl font-bold mb-10">Meet the Innovator</h2>
             <p className="text-lg leading-relaxed">
               <strong className="block text-xl">Hafisatu Adams</strong>
-              A visionary blind entrepreneur from Wenchi in the Bono Region 
-              saw the need for nutritious, convenient food options and created{" "}
-              <strong className="font-semibold">Besi</strong>. Made from 
-              millet and groundnut, Besi is a ready-to-eat meal packed with 
-              essential nutrients. Her mission is to make healthy eating 
-              accessible for students and families across Ghana and beyond.
+              A visionary blind entrepreneur from Wenchi in the Bono Region saw the need for nutritious, convenient food options and created{" "}
+              <strong className="font-semibold">Besi</strong>. Made from millet and groundnut, Besi is a ready-to-eat meal packed with essential nutrients. Her mission is to make healthy eating accessible for students and families across Ghana and beyond.
             </p>
           </div>
           <figure className="md:w-1/2 flex flex-col items-center md:items-start md:pl-12 mt-8 md:mt-0">
@@ -159,14 +157,8 @@ function Home() {
           </figure>
         </div>
       </motion.section>
-    
 
-
-
-
-
-
-
+      {/* Benefits Section */}
       <section className="py-16 bg-white" aria-labelledby="benefits-heading">
         <div className="container-custom">
           <header className="text-center mb-12">
@@ -177,87 +169,21 @@ function Home() {
               Our products are designed with your health and convenience in mind.
             </p>
           </header>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { 
-                title: "Nutritious", 
-                text: "Packed with essential nutrients from millet and groundnut to support your health.",
-                icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
-                aria: "Healthy heart icon"
-              },
-              { 
-                title: "Convenient", 
-                text: "Ready-to-eat snacks that fit perfectly into your busy lifestyle.",
-                icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
-                aria: "Clock icon"
-              },
-              { 
-                title: "Local Ingredients", 
-                text: "High-quality local ingredients supporting Ghanaian farmers.",
-                icon: "M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3",
-                aria: "Farm icon"
-              }
-            ].map((item, index) => (
-              <article 
-                key={index}
-                className="bg-secondary/10 p-6 rounded-lg text-center transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
-              >
-                <div 
-                  className="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                  aria-hidden="true"
-                >
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-8 w-8"
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    role="img"
-                    aria-label={item.aria}
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      d={item.icon} 
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-800">
-                  {item.title}
-                </h3>
-                <p className="text-gray-600">{item.text}</p>
-              </article>
+            {[ 
+              { title: "Nutritious", text: "Packed with essential nutrients from millet and groundnut to support your health.", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" }, 
+              { title: "Ready-to-Eat", text: "Quick and easy meals for busy individuals without sacrificing quality.", icon: "M5 3.5h14M5 3.5l2 2m0 0l2-2m-2 2v12l-2 2v-12z" }, 
+              { title: "Affordable", text: "Accessible pricing to ensure everyone can enjoy our healthy meals.", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" }
+            ].map((benefit, index) => (
+              <div key={index} className="text-center">
+                <motion.svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto mb-6 text-primary" fill="none" stroke="currentColor">
+                  <path d={benefit.icon} strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+                </motion.svg>
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">{benefit.title}</h3>
+                <p className="text-gray-600">{benefit.text}</p>
+              </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      <motion.section
-        initial="offscreen"
-        whileInView="onscreen"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={sectionVariants}
-        className="py-16 bg-white"
-        aria-labelledby="benefits-heading"
-      >
-        {/* Additional content can be added here */}
-      </motion.section>
-
-      <section className="py-16 bg-accent text-white">
-        <div className="container-custom text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Try Our Products?</h2>
-          <p className="mb-8 max-w-2xl mx-auto">
-            Experience the delicious taste and health benefits of our millet and groundnut snacks today.
-          </p>
-          <Link 
-            to="/products"
-            className="inline-block px-8 py-3 bg-white text-primary rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary"
-            role="button"
-          >
-            Shop Now
-          </Link>
         </div>
       </section>
     </div>
