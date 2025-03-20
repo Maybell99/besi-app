@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function Products() {
+  const navigate = useNavigate();
   const [allProducts, setAllProducts] = useState([]);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -12,13 +13,9 @@ function Products() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Debounce the search term
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 300); // Delay of 300ms
-
-    return () => clearTimeout(timeoutId); // Clean up the timeout
+    const timeoutId = setTimeout(() => setDebouncedSearchTerm(searchTerm), 300);
+    return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
   useEffect(() => {
@@ -27,22 +24,17 @@ function Products() {
       setError(null);
       try {
         const response = await fetch(`${API_URL}/api/products`);
-        if (!response.ok) {
-          throw new Error(`HTTP Error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log("Fetched Products:", data);
+        if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
 
-        // Check if response has a success key and a products array
-        if (data.success && Array.isArray(data.products)) {
-          setAllProducts(data.products); // Set the products from the response
+        const data = await response.json();
+        if (data && Array.isArray(data.products)) {
+          setAllProducts(data.products);
           localStorage.setItem("products", JSON.stringify(data.products));
           localStorage.setItem("products_lastFetch", Date.now());
         } else {
-          throw new Error("Invalid API response format");
+          throw new Error("Invalid API response format. 'products' should be an array.");
         }
       } catch (err) {
-        console.error("Fetch error:", err);
         setError(err.message || "Failed to load products.");
       } finally {
         setLoading(false);
@@ -51,7 +43,7 @@ function Products() {
 
     const cachedData = localStorage.getItem("products");
     const lastFetchTime = localStorage.getItem("products_lastFetch");
-    const expiryTime = 10 * 60 * 1000; // 10 minutes
+    const expiryTime = 10 * 60 * 1000;
 
     if (cachedData && lastFetchTime && Date.now() - lastFetchTime < expiryTime) {
       try {
@@ -65,7 +57,7 @@ function Products() {
         console.error("Error parsing cached data:", error);
       }
     } else {
-      fetchProducts();  // Fetch if no cached data or cache is expired
+      fetchProducts();
     }
   }, []);
 
@@ -73,31 +65,27 @@ function Products() {
     const term = debouncedSearchTerm.toLowerCase().trim();
     return allProducts.filter((product) => {
       const categoryMatch =
-        activeCategory === "all" ||
-        (product.category && product.category.toLowerCase() === activeCategory);
+        activeCategory === "all" || (product.category && product.category.toLowerCase() === activeCategory);
       const searchMatch =
         term === "" ||
         product.name.toLowerCase().includes(term) ||
         (product.description && product.description.toLowerCase().includes(term));
+
       return categoryMatch && searchMatch;
     });
   }, [activeCategory, debouncedSearchTerm, allProducts]);
 
-  const categories = useMemo(
-    () => ["all", ...new Set(allProducts.map((product) => product.category?.toLowerCase()).filter(Boolean))],
-    [allProducts]
-  );
+  const categories = useMemo(() => {
+    return ["all", ...new Set(allProducts.map((product) => product.category?.toLowerCase()).filter(Boolean))];
+  }, [allProducts]);
 
-  // Loader Animation (can be replaced with any animation you prefer)
   const Loader = () => (
     <div className="flex justify-center items-center py-12">
       <div className="w-16 h-16 border-4 border-t-primary border-gray-200 rounded-full animate-spin"></div>
     </div>
   );
 
-  if (loading) {
-    return <Loader />;  // Display the loader while loading
-  }
+  if (loading) return <Loader />;
 
   if (error) {
     return (
@@ -127,7 +115,9 @@ function Products() {
                 <button
                   key={index}
                   onClick={() => setActiveCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium capitalize ${activeCategory === category ? "bg-primary text-white" : "bg-white text-gray-700 hover:bg-gray-100"}`}
+                  className={`px-4 py-2 rounded-full text-sm font-medium capitalize ${
+                    activeCategory === category ? "bg-primary text-white" : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
                 >
                   {category}
                 </button>
@@ -154,20 +144,20 @@ function Products() {
               {filteredProducts.map((product) => {
                 if (!product.id) {
                   console.error("Product without an id:", product);
-                  return null; // Skip rendering this product if no 'id'
+                  return null;
                 }
 
                 return (
-                  <Link key={product.id} to={`/products/${product.id}`}>
+                  <div key={product.id} onClick={() => navigate(`/products/${product.id}`)} className="cursor-pointer">
                     <ProductCard product={product} />
-                  </Link>
+                  </div>
                 );
               })}
             </div>
           ) : (
             <div className="text-center py-12">
               <h3 className="text-xl font-semibold text-gray-700">No products found</h3>
-              <p className="text-gray-500 mt-2">Try adjusting your search or filter criteria</p>
+              <p className="text-gray-500 mt-2">Try adjusting your search or filter criteria.</p>
             </div>
           )}
         </div>
