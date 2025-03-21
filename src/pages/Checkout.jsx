@@ -1,6 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
+import P1 from "../assets/images/p1.webp";
+import P2 from "../assets/images/p2.webp";
+import P3 from "../assets/images/p3.webp";
+import P4 from "../assets/images/p4.webp";
+import P5 from "../assets/images/p5.webp";
+import P6 from "../assets/images/p6.webp";
+
+const productImages = { 1: P1, 2: P2, 3: P3, 4: P4, 5: P5, 6: P6 };
 
 function Checkout() {
   const { id } = useParams();
@@ -17,12 +25,16 @@ function Checkout() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/products/${id}`);
+        const response = await fetch(`https://my-backend-lpr5.onrender.com/api/products/${id}`);
         if (!response.ok) throw new Error("Product not found");
 
         const data = await response.json();
         console.log("✅ Fetched Product Data:", data);
-        setProduct(data);
+        if (data.success && data.product) {
+          setProduct(data.product);
+        } else {
+          setErrors("Invalid product data");
+        }
       } catch (error) {
         console.error("Fetch error:", error.message);
         setErrors("Product not found. Please try again later.");
@@ -35,8 +47,7 @@ function Checkout() {
     if (product && product.price) {
       const price = parseFloat(product.price);
       if (!isNaN(price)) {
-        const total = price * quantity;
-        setTotalAmount(total.toFixed(2));
+        setTotalAmount((price * quantity).toFixed(2));
       }
     }
   }, [product, quantity]);
@@ -51,12 +62,12 @@ function Checkout() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/checkout/initialize-payment", {
+      const response = await fetch("https://my-backend-lpr5.onrender.com/api/checkout/initialize-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          amount: parseFloat(totalAmount) * 100, // Convert to kobo
+          amount: parseFloat(totalAmount) * 100,
           name,
           address,
           product_id: id,
@@ -67,7 +78,7 @@ function Checkout() {
       const data = await response.json();
 
       if (data.status && data.data.authorization_url) {
-        window.location.href = data.data.authorization_url; // Redirect to Paystack
+        window.location.href = data.data.authorization_url;
       } else {
         setErrors("Failed to initialize payment. Please try again.");
       }
@@ -79,12 +90,11 @@ function Checkout() {
     }
   };
 
+  const productImage = product ? product.imageUrl || productImages[id] || P1 : P1;
+
   return (
     <div className="container mx-auto py-16 px-6 max-w-3xl bg-white shadow-lg rounded-lg">
-      <button
-        className="flex items-center text-primary hover:text-accent font-medium mb-4"
-        onClick={() => navigate("/products")}
-      >
+      <button className="flex items-center text-primary hover:text-accent font-medium mb-4" onClick={() => navigate("/products")}>
         <FaArrowLeft className="mr-2 size-8" /> Back to Products
       </button>
       <h1 className="text-4xl font-bold text-center mb-6">Checkout</h1>
@@ -93,9 +103,15 @@ function Checkout() {
         <div>
           <div className="bg-gray-100 p-4 rounded-lg shadow-md">
             <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
-            <h3 className="text-lg font-semibold">{product.name ?? "Loading..."}</h3>
-            <p className="text-gray-600">
-              GH₵ {product.price ? parseFloat(product.price).toFixed(2) : "0.00"}
+            <img
+              src={productImage}
+              alt={product.name}
+              className="w-40 h-40 object-cover rounded-md mx-auto"
+              onError={(e) => (e.target.src = P1)}
+            />
+            <h3 className="text-lg font-semibold text-center mt-4">{product.name}</h3>
+            <p className="text-gray-600 text-center">
+              GH₵ {product.price ? parseFloat(product.price).toFixed(2) : "Price not available"}
             </p>
             <div className="mt-4">
               <label className="block text-m font-medium text-gray-700">Quantity</label>
@@ -107,7 +123,7 @@ function Checkout() {
                 className="w-20 text-center border border-gray-300 rounded-md mt-2"
               />
             </div>
-            <h2 className="text-xl font-bold mt-4">Total: GH₵ {totalAmount}</h2>
+            <h2 className="text-xl font-bold mt-4 text-center">Total: GH₵ {totalAmount}</h2>
           </div>
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             <input
@@ -136,9 +152,7 @@ function Checkout() {
             />
             <button
               type="submit"
-              className={`w-full py-3 rounded-lg text-lg font-semibold transition ${
-                loading ? "bg-gray-400 cursor-not-allowed" : "bg-primary text-white"
-              }`}
+              className={`w-full py-3 rounded-lg text-lg font-semibold transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-primary text-white"}`}
               disabled={loading}
             >
               {loading ? "Processing..." : "Pay with Paystack"}
