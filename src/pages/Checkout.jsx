@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import P1 from "../assets/images/p1.webp";
 import P2 from "../assets/images/p2.webp";
@@ -13,6 +13,7 @@ const productImages = { 1: P1, 2: P2, 3: P3, 4: P4, 5: P5, 6: P6 };
 function Checkout() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const productId = Number(id);
   const [product, setProduct] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,26 +23,27 @@ function Checkout() {
   const [totalAmount, setTotalAmount] = useState("0.00");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await fetch(`https://my-backend-lpr5.onrender.com/api/products/${id}`);
-        if (!response.ok) throw new Error("Product not found");
+  const fetchProduct = useCallback(async () => {
+    try {
+      const response = await fetch(`https://my-backend-lpr5.onrender.com/api/products/${productId}`);
+      if (!response.ok) throw new Error("Product not found");
 
-        const data = await response.json();
-        console.log("✅ Fetched Product Data:", data);
-        if (data.success && data.product) {
-          setProduct(data.product);
-        } else {
-          setErrors("Invalid product data");
-        }
-      } catch (error) {
-        console.error("Fetch error:", error.message);
-        setErrors("Product not found. Please try again later.");
+      const data = await response.json();
+      console.log("✅ Fetched Product Data:", data);
+      if (data.success && data.product) {
+        setProduct(data.product);
+      } else {
+        setErrors("Invalid product data");
       }
-    };
+    } catch (error) {
+      console.error("Fetch error:", error.message);
+      setErrors("Product not found. Please try again later.");
+    }
+  }, [productId]);
+
+  useEffect(() => {
     fetchProduct();
-  }, [id]);
+  }, [fetchProduct]);
 
   useEffect(() => {
     if (product && product.price) {
@@ -70,14 +72,14 @@ function Checkout() {
           amount: parseFloat(totalAmount) * 100,
           name,
           address,
-          product_id: id,
+          product_id: productId,
           quantity,
         }),
       });
 
       const data = await response.json();
 
-      if (data.status && data.data.authorization_url) {
+      if (data.status && data.data?.authorization_url) {
         window.location.href = data.data.authorization_url;
       } else {
         setErrors("Failed to initialize payment. Please try again.");
@@ -90,7 +92,12 @@ function Checkout() {
     }
   };
 
-  const productImage = product ? product.imageUrl || productImages[id] || P1 : P1;
+  const handleQuantityChange = (e) => {
+    const value = Number(e.target.value);
+    setQuantity(Number.isNaN(value) || value < 1 ? 1 : value);
+  };
+
+  const productImage = product ? product.imageUrl || productImages[productId] || P1 : P1;
 
   return (
     <div className="container mx-auto py-16 px-6 max-w-3xl bg-white shadow-lg rounded-lg">
@@ -118,7 +125,7 @@ function Checkout() {
               <input
                 type="number"
                 value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                onChange={handleQuantityChange}
                 min="1"
                 className="w-20 text-center border border-gray-300 rounded-md mt-2"
               />
@@ -126,35 +133,10 @@ function Checkout() {
             <h2 className="text-xl font-bold mt-4 text-center">Total: GH₵ {totalAmount}</h2>
           </div>
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Full Name"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Delivery Address"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              required
-            />
-            <button
-              type="submit"
-              className={`w-full py-3 rounded-lg text-lg font-semibold transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-primary text-white"}`}
-              disabled={loading}
-            >
+            <input type="text" placeholder="Full Name" className="w-full px-4 py-2 border border-gray-300 rounded-lg" value={name} onChange={(e) => setName(e.target.value)} required />
+            <input type="email" placeholder="Email" className="w-full px-4 py-2 border border-gray-300 rounded-lg" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <input type="text" placeholder="Delivery Address" className="w-full px-4 py-2 border border-gray-300 rounded-lg" value={address} onChange={(e) => setAddress(e.target.value)} required />
+            <button type="submit" className={`w-full py-3 rounded-lg text-lg font-semibold transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-primary text-white"}`} disabled={loading}>
               {loading ? "Processing..." : "Pay with Paystack"}
             </button>
           </form>
